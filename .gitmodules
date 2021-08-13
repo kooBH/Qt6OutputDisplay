@@ -1,3 +1,0 @@
-[submodule ".\\build\\Qtbin"]
-	path = .\\build\\Qtbin
-	url = https://github.com/koobh/Qtbin
