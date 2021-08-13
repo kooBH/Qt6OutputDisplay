@@ -47,8 +47,8 @@ foreach(i  ${SRC_Qt_MOC})
 	
 	if(MSVC)
 		execute_process(
-		COMMAND Qtbin/moc.exe ${i} -o tmp/moc_${fisrt_element}.cpp
-		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Qtbin  
+		COMMAND moc.exe ${i} -o tmp/moc_${fisrt_element}.cpp
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/bin  
 		 )
 	endif()
 	
@@ -86,13 +86,13 @@ list(APPEND INCL
 	src
 	tmp
 	# QtFramework
-	build/Qtbin/include
-	build/Qtbin/include/QtCore
-	build/Qtbin/include/QtCore5Compat
-	build/Qtbin/include/QtGui
-	build/Qtbin/include/QtWidgets
-	build/Qtbin/include/QtOpenGL
-	build/Qtbin/include/QtOpenGLWidgets
+	bin/include
+	bin/include/QtCore
+	bin/include/QtCore5Compat
+	bin/include/QtGui
+	bin/include/QtWidgets
+	bin/include/QtOpenGL
+	bin/include/QtOpenGLWidgets
 )
 
 ## QtFramework ##
@@ -104,10 +104,10 @@ if(UNIX AND NOT APPLE)
     )
 elseif(MSVC)
 	list(APPEND LINKLIBS
-		debug ${PROJECT_SOURCE_DIR}/build/Qtbin/lib/Qt6Cored.lib optimized ${PROJECT_SOURCE_DIR}/build/Qtbin/lib/Qt6Core.lib
-		debug ${PROJECT_SOURCE_DIR}/build/Qtbin/lib/Qt6Guid.lib optimized ${PROJECT_SOURCE_DIR}/build/Qtbin/lib/Qt6Gui.lib
-		debug ${PROJECT_SOURCE_DIR}/build/Qtbin/lib/Qt6Widgetsd.lib optimized ${PROJECT_SOURCE_DIR}/build/Qtbin/lib/Qt6Widgets.lib	
-		debug ${PROJECT_SOURCE_DIR}/build/Qtbin/lib/Qt6OpenGLWidgetsd.lib optimized ${PROJECT_SOURCE_DIR}/build/Qtbin/lib/Qt6OpenGLWidgets.lib	
+		debug ${PROJECT_SOURCE_DIR}/bin/lib/Qt6Cored.lib optimized ${PROJECT_SOURCE_DIR}/bin/lib/Qt6Core.lib
+		debug ${PROJECT_SOURCE_DIR}/bin/lib/Qt6Guid.lib optimized ${PROJECT_SOURCE_DIR}/bin/lib/Qt6Gui.lib
+		debug ${PROJECT_SOURCE_DIR}/bin/lib/Qt6Widgetsd.lib optimized ${PROJECT_SOURCE_DIR}/bin/lib/Qt6Widgets.lib	
+		debug ${PROJECT_SOURCE_DIR}/bin/lib/Qt6OpenGLWidgetsd.lib optimized ${PROJECT_SOURCE_DIR}/bin/lib/Qt6OpenGLWidgets.lib	
 	)
 endif()
 

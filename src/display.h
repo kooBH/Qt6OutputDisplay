@@ -5,7 +5,13 @@
 #include <QVBoxLayout>
 #include <QTextBrowser>
 
+#include <QTextStream>
+#include <QFile>
+
+#include <chrono>
 #include <filesystem>
+#include <thread>
+#include <iostream>
 
 /*
 https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c/37494654#37494654
@@ -33,8 +39,13 @@ class Display : public QWidget {
 private :
   QVBoxLayout layout_main;
   QLabel label_text;
+  std::string path_detect="../output/";
 
+  /* Detect related */
   void Detect();
+  std::thread* thread_detect = nullptr;
+  bool flag_detect = false;
+
 public :
   Display();
   ~Display();
