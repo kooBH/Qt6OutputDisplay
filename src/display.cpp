@@ -32,6 +32,10 @@ Display::Display() :QWidget() {
      image_happy.load("../res/happy.png");
      image_neutral.load("../res/neutral.png");
      image_angry.load("../res/angry.png");
+
+     pixmap_happy = QPixmap::fromImage(image_happy).scaled(width_face, height_face, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+     pixmap_neutral = QPixmap::fromImage(image_neutral).scaled(width_face, height_face, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+     pixmap_angry = QPixmap::fromImage(image_angry).scaled(width_face, height_face, Qt::KeepAspectRatio, Qt::SmoothTransformation);
      
      // NOTE :: jpg file didn't loaded well.
      pixmap_bkgnd.load("../res/background.png");
@@ -90,10 +94,10 @@ Display::Display() :QWidget() {
 }
 
 void Display::paintEvent(QPaintEvent* p) {
-    pixmap_bkgnd = pixmap_bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    QPixmap tmp = pixmap_bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
     QPainter painter(this);
-    painter.drawPixmap(0, 0, pixmap_bkgnd);
+    painter.drawPixmap(0, 0, tmp);
 
     QWidget::paintEvent(p);
 
@@ -159,12 +163,12 @@ void Display::SlotGetEmotion(QString text) {
 
 void Display::SlotGetFace(QString text) {
   if (!QString::compare("happy", text)) {
-    label_face.setPixmap(QPixmap::fromImage(image_happy).scaled(width_face,height_face,Qt::KeepAspectRatio));
+    label_face.setPixmap(pixmap_happy);
   }
   else if (!QString::compare("neutral", text)) {
-    label_face.setPixmap(QPixmap::fromImage(image_neutral).scaled(width_face,height_face,Qt::KeepAspectRatio));
+    label_face.setPixmap(pixmap_neutral);
   }
   else if (!QString::compare("angry", text)) {
-    label_face.setPixmap(QPixmap::fromImage(image_angry).scaled(width_face,height_face,Qt::KeepAspectRatio));
+    label_face.setPixmap(pixmap_angry);
   }
 }

@@ -71,9 +71,13 @@ private :
   QImage image_happy;
   QImage image_neutral;
   QImage image_angry;
-
   QImage image_bkgnd;
+
   QPixmap pixmap_bkgnd;
+  QPixmap pixmap_happy;
+  QPixmap pixmap_neutral;
+  QPixmap pixmap_angry;
+
 
   enum emotion {
     EMO_HAPPY,
