@@ -13,3 +13,15 @@ _deps
 
 
 build
+
+# font
+*.ttf
+
+# images
+*.jpg
+*.png 
+
+## temp
+
+output 
+

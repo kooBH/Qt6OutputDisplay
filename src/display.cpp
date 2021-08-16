@@ -2,22 +2,79 @@
 
 Display::Display() :QWidget() {
    /* init widgets */{
-    layout_main.addWidget(&label_text);
+    layout_main.addStretch();
+    
+    layout_first.addWidget(&label_text,Qt::AlignCenter);
+
+    layout_main.addLayout(&layout_first);
+
+    layout_second.addStretch();
+    layout_second.addWidget(&label_emotion);
+    layout_second.addWidget(&label_face);
+    layout_second.addStretch();
+    layout_main.addLayout(&layout_second);
+
+
+    layout_main.addStretch();
 
     setLayout(&layout_main);
+
+
   }
+
+   /* load resoruces*/
+   {
+     image_happy.load("../res/happy.png");
+     image_neutral.load("../res/neutral.png");
+     image_angry.load("../res/angry.png");
+   }
 
   /* Configure Widgets */ {
     //setFixedSize(QSize(600, 400));
 
-    setStyleSheet("\
+     QFont font_text = label_text.font();
+     font_text.setPointSize(size_text);
+     label_text.setFont(font_text);
+     label_text.setAlignment(Qt::AlignCenter);
+
+     QFont font_emotion = label_emotion.font();
+     font_emotion.setPointSize(size_emotion);
+     label_emotion.setFont(font_emotion);
+
+     label_text.setText("label_text");
+     label_emotion.setText("label_emotion");
+
+     // full screen
+     setWindowState(Qt::WindowMaximized);
+     
+     //QApplication::desktop();
+
+     label_text.setFixedSize(QSize(this->width(),400));
+
+    // TODO - 
+    label_face.setPixmap(QPixmap::fromImage(image_neutral).scaled(width_face,height_face,Qt::KeepAspectRatio));
+
+     /*
 			QWidget{background:rgb(153, 189, 138);}\
+      QWidget{background-image:url(../../res/background.jpg)}\
       QLabel{background:white;border: 1px solid black;}\
+     */
+     // QApp{background-image:url(../../res/background.jpg)}\
+
+    setStyleSheet("\
       \
       ");
+
+    //palette.setBrush(this->backgroundRole(), QBrush(pixmap_bkgnd));
+   // setPalette(palette);
+   // this->setPalette(palette);
+
+   
   }
   /* Connect */ {
     QObject::connect(this, &Display::SignalSetText, this, &Display::SlotGetText);
+    QObject::connect(this, &Display::SignalSetEmotion, this, &Display::SlotGetEmotion);
+    QObject::connect(this, &Display::SignalSetFace, this, &Display::SlotGetFace);
   }
 
   // Run Detect Thread
@@ -28,7 +85,10 @@ Display::Display() :QWidget() {
 
 Display::~Display() {
   flag_detect=false;
-  thread_detect->join();
+  if (thread_detect) {
+    thread_detect->join();
+    delete thread_detect;
+  }
 
 }
 
@@ -50,10 +110,16 @@ void Display::Detect() {
         }
 
         QTextStream text_in(&file_in);
-        QString qstr_in = text_in.readAll();
+        QString qstr_in = text_in.readLine();
         std::cout << qstr_in.toStdString() << std::endl;
         now = tmp;
         emit SignalSetText(qstr_in);
+
+        // emotion
+        qstr_in = text_in.readLine();
+        std::cout << qstr_in.toStdString() << std::endl;
+        emit SignalSetEmotion(qstr_in);
+        emit SignalSetFace(qstr_in);
       }
     }
 
@@ -68,4 +134,20 @@ void Display::Detect() {
 
 void Display::SlotGetText(QString text) {
   label_text.setText(text);
+}
+
+void Display::SlotGetEmotion(QString text) {
+  label_emotion.setText(text);
+}
+
+void Display::SlotGetFace(QString text) {
+  if (!QString::compare("happy", text)) {
+    label_face.setPixmap(QPixmap::fromImage(image_happy).scaled(width_face,height_face,Qt::KeepAspectRatio));
+  }
+  else if (!QString::compare("neutral", text)) {
+    label_face.setPixmap(QPixmap::fromImage(image_neutral).scaled(width_face,height_face,Qt::KeepAspectRatio));
+  }
+  else if (!QString::compare("angry", text)) {
+    label_face.setPixmap(QPixmap::fromImage(image_angry).scaled(width_face,height_face,Qt::KeepAspectRatio));
+  }
 }
