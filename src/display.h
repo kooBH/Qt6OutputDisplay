@@ -1,4 +1,6 @@
 #include <QWidget>
+#include <QPainter>
+#include <QMainWindow>
 #include <QPushbutton>
 #include <QLabel>
 #include <QString>
@@ -35,12 +37,12 @@ How can I get the list of files in a directory using C or C++ ?
 namespace fs = std::filesystem;
 
 
-class Display : public QWidget {
+class Display : public QWidget{
     Q_OBJECT
 
 private :
+  QWidget widget_main;
   QVBoxLayout layout_main;
-
   QHBoxLayout layout_first;
   QHBoxLayout layout_second;
 
@@ -92,6 +94,9 @@ public slots:
   void SlotGetText(QString text);
   void SlotGetEmotion(QString text);
   void SlotGetFace(QString text);
+
+protected :
+  void paintEvent(QPaintEvent* p);
 
 
 };

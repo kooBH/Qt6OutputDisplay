@@ -17,7 +17,12 @@ Display::Display() :QWidget() {
 
     layout_main.addStretch();
 
+    //widget_main.setLayout(&layout_main);
+    //this->setCentralWidget(&widget_main);
+
     setLayout(&layout_main);
+
+
 
 
   }
@@ -27,6 +32,9 @@ Display::Display() :QWidget() {
      image_happy.load("../res/happy.png");
      image_neutral.load("../res/neutral.png");
      image_angry.load("../res/angry.png");
+     
+     // NOTE :: jpg file didn't loaded well.
+     pixmap_bkgnd.load("../res/background.png");
    }
 
   /* Configure Widgets */ {
@@ -60,14 +68,12 @@ Display::Display() :QWidget() {
       QLabel{background:white;border: 1px solid black;}\
      */
      // QApp{background-image:url(../../res/background.jpg)}\
+     //  background-image:url(../res/background.jpg);background-postion : center;
 
-    setStyleSheet("\
-      \
-      ");
+    //this->centralWidget()->setStyleSheet("
 
     //palette.setBrush(this->backgroundRole(), QBrush(pixmap_bkgnd));
-   // setPalette(palette);
-   // this->setPalette(palette);
+    //setPalette(palette);
 
    
   }
@@ -80,6 +86,17 @@ Display::Display() :QWidget() {
   // Run Detect Thread
   flag_detect = true;
   thread_detect = new std::thread(&Display::Detect,this);
+
+}
+
+void Display::paintEvent(QPaintEvent* p) {
+    pixmap_bkgnd = pixmap_bkgnd.scaled(this->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+    QPainter painter(this);
+    painter.drawPixmap(0, 0, pixmap_bkgnd);
+
+    QWidget::paintEvent(p);
+
 
 }
 
