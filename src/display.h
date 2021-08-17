@@ -64,25 +64,25 @@ private :
   std::thread* thread_detect = nullptr;
   bool flag_detect = false;
 
-  std::string path_happy = "../res/happy.png";
+  std::string path_positive = "../res/positive.png";
   std::string path_neutral = "../res/neutral.png";
-  std::string path_angry = "../res/angry.png";
+  std::string path_negative = "../res/negative.png";
 
-  QImage image_happy;
+  QImage image_positive;
   QImage image_neutral;
-  QImage image_angry;
+  QImage image_negative;
   QImage image_bkgnd;
 
   QPixmap pixmap_bkgnd;
-  QPixmap pixmap_happy;
+  QPixmap pixmap_positive;
   QPixmap pixmap_neutral;
-  QPixmap pixmap_angry;
+  QPixmap pixmap_negative;
 
 
   enum emotion {
-    EMO_HAPPY,
+    EMO_positive,
     EMO_NEUTRAL,
-    EMO_ANGRY
+    EMO_negative
   };
 
 

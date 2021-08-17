@@ -29,13 +29,13 @@ Display::Display() :QWidget() {
 
    /* load resoruces*/
    {
-     image_happy.load("../res/happy.png");
+     image_positive.load("../res/positive.png");
      image_neutral.load("../res/neutral.png");
-     image_angry.load("../res/angry.png");
+     image_negative.load("../res/negative.png");
 
-     pixmap_happy = QPixmap::fromImage(image_happy).scaled(width_face, height_face, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+     pixmap_positive = QPixmap::fromImage(image_positive).scaled(width_face, height_face, Qt::KeepAspectRatio, Qt::SmoothTransformation);
      pixmap_neutral = QPixmap::fromImage(image_neutral).scaled(width_face, height_face, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-     pixmap_angry = QPixmap::fromImage(image_angry).scaled(width_face, height_face, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+     pixmap_negative = QPixmap::fromImage(image_negative).scaled(width_face, height_face, Qt::KeepAspectRatio, Qt::SmoothTransformation);
      
      // NOTE :: jpg file didn't loaded well.
      pixmap_bkgnd.load("../res/background.png");
@@ -49,6 +49,8 @@ Display::Display() :QWidget() {
      label_text.setFont(font_text);
      label_text.setAlignment(Qt::AlignCenter);
 
+     label_text.setWordWrap(true);
+
      QFont font_emotion = label_emotion.font();
      font_emotion.setPointSize(size_emotion);
      label_emotion.setFont(font_emotion);
@@ -61,7 +63,7 @@ Display::Display() :QWidget() {
      
      //QApplication::desktop();
 
-     label_text.setFixedSize(QSize(this->width(),400));
+    // label_text.setFixedSize(QSize(this->width(),400));
 
     // TODO - 
     label_face.setPixmap(QPixmap::fromImage(image_neutral).scaled(width_face,height_face,Qt::KeepAspectRatio));
@@ -162,13 +164,13 @@ void Display::SlotGetEmotion(QString text) {
 }
 
 void Display::SlotGetFace(QString text) {
-  if (!QString::compare("happy", text)) {
-    label_face.setPixmap(pixmap_happy);
+  if (!QString::compare("positive", text)) {
+    label_face.setPixmap(pixmap_positive);
   }
   else if (!QString::compare("neutral", text)) {
     label_face.setPixmap(pixmap_neutral);
   }
-  else if (!QString::compare("angry", text)) {
-    label_face.setPixmap(pixmap_angry);
+  else if (!QString::compare("negative", text)) {
+    label_face.setPixmap(pixmap_negative);
   }
 }
