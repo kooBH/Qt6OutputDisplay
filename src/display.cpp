@@ -143,6 +143,8 @@ void Display::Detect() {
         std::cout << qstr_in.toStdString() << std::endl;
         emit SignalSetEmotion(qstr_in);
         emit SignalSetFace(qstr_in);
+
+        file_in.remove();
       }
     }
 
