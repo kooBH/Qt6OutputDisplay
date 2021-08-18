@@ -44,13 +44,25 @@ private :
   QWidget widget_main;
   QVBoxLayout layout_main;
   QHBoxLayout layout_first;
-  QHBoxLayout layout_second;
+  QHBoxLayout layout_multi;
+  QHBoxLayout layout_text;
+  QHBoxLayout layout_audio;
 
 
   QLabel label_text;
-  QLabel label_emotion;
-  QLabel label_face;
+
+  QLabel label_emotion_multi;
+  QLabel label_face_multi;
+
+  QLabel label_emotion_text;
+  QLabel label_face_text;
+
+  QLabel label_emotion_audio;
+  QLabel label_face_audio;
   std::string path_detect="../output/";
+  std::string path_multi="../output/";
+  std::string path_text="../output/";
+  std::string path_audio="../output/";
 
   /* params */
   const int size_text     = 64;
@@ -92,12 +104,20 @@ public :
 
 signals:
   void SignalSetText(QString text);
-  void SignalSetEmotion(QString text);
-  void SignalSetFace(QString text);
+  void SignalSetEmotionMulti(QString text);
+  void SignalSetFaceMulti(QString text);
+  void SignalSetEmotionText(QString text);
+  void SignalSetFaceText(QString text);
+  void SignalSetEmotionAudio(QString text);
+  void SignalSetFaceAudio(QString text);
 public slots:
   void SlotGetText(QString text);
-  void SlotGetEmotion(QString text);
-  void SlotGetFace(QString text);
+  void SlotGetEmotionMulti(QString text);
+  void SlotGetEmotionText(QString text);
+  void SlotGetEmotionAudio(QString text);
+  void SlotGetFaceMulti(QString text);
+  void SlotGetFaceText(QString text);
+  void SlotGetFaceAudio(QString text);
 
 protected :
   void paintEvent(QPaintEvent* p);

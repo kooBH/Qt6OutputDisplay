@@ -8,12 +8,20 @@ Display::Display() :QWidget() {
 
     layout_main.addLayout(&layout_first);
 
-    layout_second.addStretch();
-    layout_second.addWidget(&label_emotion);
-    layout_second.addWidget(&label_face);
-    layout_second.addStretch();
-    layout_main.addLayout(&layout_second);
+    layout_multi.addStretch();
+    layout_multi.addWidget(&label_emotion_multi);
+    layout_multi.addWidget(&label_face_multi);
+    layout_multi.addStretch();
 
+    layout_multi.addStretch();
+    layout_multi.addWidget(&label_emotion_multi);
+    layout_multi.addWidget(&label_face_multi);
+    layout_multi.addStretch();
+
+    layout_multi.addStretch();
+    layout_multi.addWidget(&label_emotion_multi);
+    layout_multi.addWidget(&label_face_multi);
+    layout_multi.addStretch();
 
     layout_main.addStretch();
 
@@ -48,15 +56,25 @@ Display::Display() :QWidget() {
      font_text.setPointSize(size_text);
      label_text.setFont(font_text);
      label_text.setAlignment(Qt::AlignCenter);
-
      label_text.setWordWrap(true);
-
-     QFont font_emotion = label_emotion.font();
-     font_emotion.setPointSize(size_emotion);
-     label_emotion.setFont(font_emotion);
-
      label_text.setText("label_text");
-     label_emotion.setText("label_emotion");
+
+     QFont font_emotion;
+
+     font_emotion = label_emotion_multi.font();
+     font_emotion.setPointSize(size_emotion);
+     label_emotion_multi.setFont(font_emotion);
+     label_emotion_multi.setText("label_emotion");
+
+     font_emotion = label_emotion_text.font();
+     font_emotion.setPointSize(size_emotion);
+     label_emotion_text.setFont(font_emotion);
+     label_emotion_text.setText("label_emotion");
+
+     font_emotion = label_emotion_audio.font();
+     font_emotion.setPointSize(size_emotion);
+     label_emotion_audio.setFont(font_emotion);
+     label_emotion_audio.setText("label_emotion");
 
      // full screen
      setWindowState(Qt::WindowMaximized);
@@ -66,7 +84,9 @@ Display::Display() :QWidget() {
     // label_text.setFixedSize(QSize(this->width(),400));
 
     // TODO - 
-    label_face.setPixmap(QPixmap::fromImage(image_neutral).scaled(width_face,height_face,Qt::KeepAspectRatio));
+     label_face_multi.setPixmap(QPixmap::fromImage(image_neutral).scaled(width_face,height_face,Qt::KeepAspectRatio));
+     label_face_text.setPixmap(QPixmap::fromImage(image_neutral).scaled(width_face,height_face,Qt::KeepAspectRatio));
+     label_face_audio.setPixmap(QPixmap::fromImage(image_neutral).scaled(width_face,height_face,Qt::KeepAspectRatio));
 
      /*
 			QWidget{background:rgb(153, 189, 138);}\
@@ -85,8 +105,12 @@ Display::Display() :QWidget() {
   }
   /* Connect */ {
     QObject::connect(this, &Display::SignalSetText, this, &Display::SlotGetText);
-    QObject::connect(this, &Display::SignalSetEmotion, this, &Display::SlotGetEmotion);
-    QObject::connect(this, &Display::SignalSetFace, this, &Display::SlotGetFace);
+    QObject::connect(this, &Display::SignalSetEmotionMulti, this, &Display::SlotGetEmotionMulti);
+    QObject::connect(this, &Display::SignalSetFaceMulti, this, &Display::SlotGetFaceMulti);
+    QObject::connect(this, &Display::SignalSetEmotionText, this, &Display::SlotGetEmotionText);
+    QObject::connect(this, &Display::SignalSetFaceText, this, &Display::SlotGetFaceText);
+    QObject::connect(this, &Display::SignalSetEmotionAudio, this, &Display::SlotGetEmotionAudio);
+    QObject::connect(this, &Display::SignalSetFaceAudio, this, &Display::SlotGetFaceAudio);
   }
 
   // Run Detect Thread
@@ -122,6 +146,45 @@ void Display::Detect() {
  auto now = std::chrono::system_clock::now().time_since_epoch().count();
 
   while (flag_detect) {
+   //std::cout << entry.path() << " | " << entry.last_write_time().time_since_epoch() << std::endl;
+    for (const auto& entry : fs::directory_iterator(path_detect)) {
+      //std::cout << entry.path() << " | " << entry.last_write_time().time_since_epoch() << std::endl;
+      std::cout << entry.path() << " | " << std::endl;
+      auto tmp = entry.last_write_time().time_since_epoch().count();
+
+      if (tmp > now) {
+
+        QFile file_in(entry.path());
+        now = tmp;
+
+        //multi
+        QFile file_in_multi(QString::fromStdString(path_multi));
+        QTextStream text_in_multi(&file_in_multi);
+        QString qstr_in_multi = text_in_multi.readLine();
+        emit SignalSetText(qstr_in_multi);
+
+        // text
+        QFile file_in_text(QString::fromStdString(path_text));
+        QTextStream text_in_text(&file_in_text);
+        QString qstr_in_text = text_in_text.readLine();
+
+        //audio
+        QFile file_in_audio(QString::fromStdString(path_audio));
+        QTextStream text_in_audio(&file_in_audio);
+        QString qstr_in_audio = text_in_audio.readLine();
+
+        emit SignalSetEmotionMulti(qstr_in_multi);
+        emit SignalSetFaceMulti(qstr_in_multi);
+        emit SignalSetEmotionText(qstr_in_text);
+        emit SignalSetFaceText(qstr_in_text);
+        emit SignalSetEmotionAudio(qstr_in_audio);
+        emit SignalSetFaceAudio(qstr_in_audio);
+
+        file_in.remove();
+      }
+    }
+
+   /*
     for (const auto& entry : fs::directory_iterator(path_detect)) {
       //std::cout << entry.path() << " | " << entry.last_write_time().time_since_epoch() << std::endl;
       std::cout << entry.path() << " | " << std::endl;
@@ -131,7 +194,6 @@ void Display::Detect() {
         if (!file_in.open(QIODevice::ReadOnly)) {
           std::cout<<"ERROR::"<< file_in.errorString().toStdString()<<std::endl;
         }
-
         QTextStream text_in(&file_in);
         QString qstr_in = text_in.readLine();
         std::cout << qstr_in.toStdString() << std::endl;
@@ -141,13 +203,13 @@ void Display::Detect() {
         // emotion
         qstr_in = text_in.readLine();
         std::cout << qstr_in.toStdString() << std::endl;
-        emit SignalSetEmotion(qstr_in);
-        emit SignalSetFace(qstr_in);
 
+        emit SignalSetEmotionMulti(qstr_in);
+        emit SignalSetFaceMulti(qstr_in);
         file_in.remove();
       }
     }
-
+    */
     std::cout << "===== loop ====="<<std::endl;
 
     //emit SignalSetText(text);
@@ -161,18 +223,51 @@ void Display::SlotGetText(QString text) {
   label_text.setText(text);
 }
 
-void Display::SlotGetEmotion(QString text) {
-  label_emotion.setText(text);
+void Display::SlotGetEmotionMulti(QString text) {
+  label_emotion_multi.setText(text);
 }
 
-void Display::SlotGetFace(QString text) {
+void Display::SlotGetFaceMulti(QString text) {
   if (!QString::compare("positive", text)) {
-    label_face.setPixmap(pixmap_positive);
+    label_face_multi.setPixmap(pixmap_positive);
   }
   else if (!QString::compare("neutral", text)) {
-    label_face.setPixmap(pixmap_neutral);
+    label_face_multi.setPixmap(pixmap_neutral);
   }
   else if (!QString::compare("negative", text)) {
-    label_face.setPixmap(pixmap_negative);
+    label_face_multi.setPixmap(pixmap_negative);
   }
 }
+void Display::SlotGetEmotionText(QString text) {
+  label_emotion_text.setText(text);
+}
+
+void Display::SlotGetFaceText(QString text) {
+  if (!QString::compare("positive", text)) {
+    label_face_text.setPixmap(pixmap_positive);
+  }
+  else if (!QString::compare("neutral", text)) {
+    label_face_text.setPixmap(pixmap_neutral);
+  }
+  else if (!QString::compare("negative", text)) {
+    label_face_text.setPixmap(pixmap_negative);
+  }
+}
+
+void Display::SlotGetEmotionAudio(QString text) {
+  label_emotion_audio.setText(text);
+}
+
+void Display::SlotGetFaceAudio(QString text) {
+  if (!QString::compare("positive", text)) {
+    label_face_audio.setPixmap(pixmap_positive);
+  }
+  else if (!QString::compare("neutral", text)) {
+    label_face_audio.setPixmap(pixmap_neutral);
+  }
+  else if (!QString::compare("negative", text)) {
+    label_face_audio.setPixmap(pixmap_negative);
+  }
+}
+
+
